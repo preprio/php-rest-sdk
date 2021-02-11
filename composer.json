@@ -1,0 +1,23 @@
+{
+    "name": "graphlr/prepr-api",
+    "description": "Prepr API wrapper",
+    "keywords": ["laravel", "prepr", "preprforradio"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Prepr",
+            "email": "support@prepr.io"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.6.4",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "lastguest/murmurhash": "^2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Graphlr\\Prepr\\": "src/"
+        }
+    }
+}
