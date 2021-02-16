@@ -26,12 +26,14 @@ class Prepr
 
     private $chunkSize = 26214400;
 
-    public function __construct()
+    public function __construct($authorization = null, $userId = null, $baseUrl = 'https://api.eu1.prepr.io/')
     {
-        $this->baseUrl = 'https://api.eu1.prepr.io/';
-        $this->authorization = 'token';
+        $this->baseUrl = $baseUrl;
+        $this->authorization = $authorization;
 
-        $this->userId = $this->hashUserId('');
+        if($userId) {
+            $this->userId = $this->hashUserId($userId);
+        }
     }
 
     protected function client()
@@ -68,9 +70,8 @@ class Prepr
         $this->rawResponse = $this->request->getBody()->getContents();
         $this->response = json_decode($this->rawResponse, true);
 
-
         // Files larger then 25 MB (upload chunked)
-        if (data_get($this->file, 'chunks') > 1 && ($this->getStatusCode() === 201 || $this->getStatusCode() === 200)) {
+        if ($this->data_get($this->file, 'chunks') > 1 && ($this->getStatusCode() === 201 || $this->getStatusCode() === 200)) {
             return $this->processFileUpload();
         }
 
@@ -187,12 +188,13 @@ class Prepr
 
             // Files larger then 25 MB (upload chunked)
             if ($this->data_get($this->file, 'chunks') > 1) {
-                data_set($this->params, 'upload_phase', 'start');
-                data_set($this->params, 'file_size', $this->data_get($this->file, 'size'));
+
+                $this->params['upload_phase'] = 'start';
+                $this->params['file_size'] = $this->data_get($this->file, 'size');
 
                 // Files smaller then 25 MB (upload directly)
             } else {
-                data_set($this->params, 'source', $this->data_get($this->file, 'file'));
+                $this->params['source'] = $this->data_get($this->file, 'file');
             }
 
         }
@@ -213,11 +215,10 @@ class Prepr
             $original = \GuzzleHttp\Psr7\stream_for($this->data_get($this->file, 'file'));
             $stream = new \GuzzleHttp\Psr7\LimitStream($original, ($endOfFile ? ($fileSize - $offset) : $this->chunkSize), $offset);
 
-            data_set($this->params, 'upload_phase', 'transfer');
-            data_set($this->params, 'file_chunk', $stream);
+            $this->params['upload_phase'] = 'transfer';
+            $this->params['file_chunk'] = $stream;
 
-            $prepr = (new Prepr())
-                ->authorization($this->authorization)
+            $prepr = (new Prepr($this->authorization,$this->userId,$this->baseUrl))
                 ->path('assets/{id}/multipart', [
                     'id' => $id,
                 ])
@@ -229,10 +230,9 @@ class Prepr
             }
         }
 
-        data_set($this->params, 'upload_phase', 'finish');
+        $this->params['upload_phase'] = 'finish';
 
-        return (new Prepr())
-            ->authorization($this->authorization)
+        return (new Prepr($this->authorization,$this->userId,$this->baseUrl))
             ->path('assets/{id}/multipart', [
                 'id' => $id,
             ])
@@ -252,13 +252,12 @@ class Prepr
 
         while(true) {
 
-            $query = $this->query;
+            $query = $this->rawQuery;
 
-            data_set($query,'limit', $perPage);
-            data_set($query,'offset',$page*$perPage);
+            $query['limit'] = $perPage;
+            $query['offset'] = $page*$perPage;
 
-            $result = (new Prepr())
-                ->authorization($this->authorization)
+            $result = (new Prepr($this->authorization,$this->userId,$this->baseUrl))
                 ->path($this->path)
                 ->query($query)
                 ->get();
