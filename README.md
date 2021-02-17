@@ -13,8 +13,7 @@ composer require graphlr/prepr-api
 #### Config variables
 
 ```text
-$this->baseUrl = 'https://api.eu1.prepr.io/';
-$this->authorization = 'token';
+$apiRequest = new Prepr('token','userId','baseUrl');
 ```
 
 #### Override variables
@@ -30,7 +29,7 @@ use Graphlr\Prepr\Prepr;
 ##### Get All
 
 ```php
-$apiRequest = (new Prepr)
+$apiRequest
     ->path('tags')
     ->query([
         'fields' => 'example'
@@ -38,14 +37,14 @@ $apiRequest = (new Prepr)
     ->get();
 
 if($apiRequest->getStatusCode() == 200) {
-    dump($apiRequest->getResponse());
+    print_r($apiRequest->getResponse());
 }
 ```
 
 ##### Get Single
 
 ```php
-$apiRequest = (new Prepr)
+$apiRequest
     ->path('tags/{id}',[
         'id' => 1
     ]),
@@ -55,14 +54,14 @@ $apiRequest = (new Prepr)
     ->get();
 
 if($apiRequest->getStatusCode() == 200) {
-    dump($apiRequest->getResponse());
+    print_r($apiRequest->getResponse());
 }
 ```
 
 ##### Post
 
 ```php
-$apiRequest = (new Prepr)
+$apiRequest
     ->path('tags')
     ->params([
         'body' => 'Example'
@@ -70,14 +69,14 @@ $apiRequest = (new Prepr)
     ->post();
 
 if($apiRequest->getStatusCode() == 201) {
-    dump($apiRequest->getResponse());
+    print_r($apiRequest->getResponse());
 }
 ```
 
 ##### Put
 
 ```php
-$apiRequest = (new Prepr)
+$apiRequest
     ->path('tags')
     ->params([
         'body' => 'Example'
@@ -85,14 +84,14 @@ $apiRequest = (new Prepr)
     ->put();
 
 if($apiRequest->getStatusCode() == 200) {
-    dump($apiRequest->getResponse());
+    print_r($apiRequest->getResponse());
 }
 ```
 
 ##### Delete
 
 ```php
-$apiRequest = (new Prepr)
+$apiRequest
     ->path('tags/{id}',[
         'id' => 1
     ])
@@ -104,10 +103,9 @@ if($apiRequest->getStatusCode() == 204) {
 ```
 
 ##### A/B testing custom userId
-Default is Laravel session id `session()->getId()`
 
 ```php
-$apiRequest = (new Prepr)
+$apiRequest
     ->path('tags/{id}',[
         'id' => 1
     ]),
@@ -120,14 +118,14 @@ $apiRequest = (new Prepr)
     ->get();
 
 if($apiRequest->getStatusCode() == 200) {
-    dump($apiRequest->getResponse());
+    print_r($apiRequest->getResponse());
 }
 ```
 
 ##### Multipart/Chunk upload
 
 ```php
-$apiRequest = (new Prepr)
+$apiRequest
     ->path('assets')
     ->params([
       'body' => 'Example',
@@ -136,14 +134,14 @@ $apiRequest = (new Prepr)
     ->post();
 
 if($apiRequest->getStatusCode() == 200) {
-    dump($apiRequest->getResponse());
+    print_r($apiRequest->getResponse());
 }
 ```
 
 ##### Autopaging
 
 ```php
-$apiRequest = (new Prepr)
+$apiRequest
     ->path('publications')
     ->query([
         'limit' => 200 // optional
@@ -151,7 +149,7 @@ $apiRequest = (new Prepr)
     ->autoPaging();
 
 if($apiRequest->getStatusCode() == 200) {
-    dump($apiRequest->getResponse());
+    print_r($apiRequest->getResponse());
 }
 ```
 
