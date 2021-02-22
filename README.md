@@ -1,6 +1,6 @@
-# Prepr API Wrapper
+# Prepr PHP API Wrapper
 
-This package is a wrapper for the <a href="https://prepr.io">Prepr</a> API.
+This package is a wrapper for the <a href="https://prepr.dev">Prepr</a> REST API.
 
 #### Installation
 
