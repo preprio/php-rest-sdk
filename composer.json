@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Preprio\\": "src/"
+            "Preprio\\Prepr\\": "src/"
         }
     }
 }
