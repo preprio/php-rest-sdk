@@ -1,5 +1,5 @@
 {
-    "name": "prepr/php-sdk",
+    "name": "preprio/php-sdk",
     "description": "Prepr API wrapper",
     "keywords": ["laravel", "prepr"],
     "license": "MIT",
@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Prepr\\Prepr\\": "src/"
+            "Preprio\\Prepr\\": "src/"
         }
     }
 }

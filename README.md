@@ -7,7 +7,7 @@ This package is a wrapper for the <a href="https://prepr.dev">Prepr</a> REST API
 You can install the package via composer:
 
 ```bash
-composer require prepr/php-sdk
+composer require preprio/php-sdk
 ```
 
 #### Config variables
@@ -23,7 +23,7 @@ The authorization can also be set for one specific request `->url('url')->author
 #### Examples
 
 ```php
-use Graphlr\Prepr\Prepr;
+use Preprio\Prepr;
 ```
 
 ##### Get All
