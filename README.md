@@ -23,7 +23,7 @@ The authorization can also be set for one specific request `->url('url')->author
 #### Examples
 
 ```php
-use Preprio\Prepr\Prepr;
+use Preprio\Prepr;
 ```
 
 ##### Get All
