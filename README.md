@@ -1,4 +1,4 @@
-# Prepr PHP API Wrapper
+# Prepr PHP SDK
 
 This package is a wrapper for the <a href="https://prepr.dev">Prepr</a> REST API.
 
@@ -7,7 +7,7 @@ This package is a wrapper for the <a href="https://prepr.dev">Prepr</a> REST API
 You can install the package via composer:
 
 ```bash
-composer require graphlr/prepr-api
+composer require prepr/php-sdk
 ```
 
 #### Config variables
