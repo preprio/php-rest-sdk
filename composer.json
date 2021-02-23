@@ -1,7 +1,7 @@
 {
-    "name": "graphlr/prepr-api",
+    "name": "prepr/php-sdk",
     "description": "Prepr API wrapper",
-    "keywords": ["laravel", "prepr", "preprforradio"],
+    "keywords": ["laravel", "prepr"],
     "license": "MIT",
     "authors": [
         {
@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Graphlr\\Prepr\\": "src/"
+            "Prepr\\Prepr\\": "src/"
         }
     }
 }

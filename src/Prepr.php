@@ -1,6 +1,6 @@
 <?php
 
-namespace Graphlr\Prepr;
+namespace Prepr\Prepr;
 
 use GuzzleHttp\Client;
 use Cache;
@@ -196,7 +196,6 @@ class Prepr
             } else {
                 $this->params['source'] = $this->data_get($this->file, 'file');
             }
-
         }
 
         return $this;
