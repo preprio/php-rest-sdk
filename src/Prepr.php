@@ -1,6 +1,6 @@
 <?php
 
-namespace Preprio\Prepr;
+namespace Preprio;
 
 use GuzzleHttp\Client;
 use Cache;
