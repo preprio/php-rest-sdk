@@ -1,64 +1,140 @@
-# Prepr PHP SDK
+# Getting started with PHP
 
 This package is a wrapper for the <a href="https://prepr.dev">Prepr</a> REST API.
 
-#### Installation
+## Basics
+The SDK on [GitHub](https://github.com/preprio/php-sdk)  
+Minimal PHP version: `> 5.6.4`   
+Requires `GuzzleHttp 7.0.X`, `Murmurhash 2.0.X`
 
-You can install the package via composer:
+## Installation
+
+You can install the SDK as a composer package.
 
 ```bash
 composer require preprio/php-sdk
 ```
 
-#### Config variables
+## Making your first request
 
-```text
-$apiRequest = new Prepr('token','userId','baseUrl');
-```
-
-#### Override variables
-
-The authorization can also be set for one specific request `->url('url')->authorization('token')`.
-
-#### Examples
+Let's start with getting all publications from your Prepr Environment. 
 
 ```php
+<?php
+
 use Preprio\Prepr;
-```
 
-##### Get All
+$apiRequest = new Prepr('{ACCESS_TOKEN}');
 
-```php
 $apiRequest
-    ->path('tags')
+    ->path('publications')
     ->query([
-        'fields' => 'example'
+        'fields' => 'items'
     ])
     ->get();
 
 if($apiRequest->getStatusCode() == 200) {
+
     print_r($apiRequest->getResponse());
 }
 ```
 
-##### Get Single
+
+To get a single publication, pass the Id to the request.
+
+```php
+<?php
+
+use Preprio\Prepr;
+
+$apiRequest = new Prepr('{ACCESS_TOKEN}');
+
+$apiRequest
+    ->path('publications/{id}', [
+        'id' => '1236f0b1-b26d-4dde-b835-9e4e441a6d09'
+    ])
+    ->query([
+        'fields' => 'items'
+    ])
+    ->get();
+
+if($apiRequest->getStatusCode() == 200) {
+
+    print_r($apiRequest->getResponse());
+}
+```
+
+
+## A/B testing with Optimize
+
+To enable A/B testing you can pass a User ID to provide a consistent result.
+The A/B testing feature requires the use of the cached CDN API.
+
+To switch off A/B testing, pass NULL to the UserId param.
+
+```php
+$apiRequest = new Prepr('{ACCESS_TOKEN}', '{{YourCustomUserId}}');
+```
+
+or per request
 
 ```php
 $apiRequest
-    ->path('tags/{id}',[
+    ->path('publications/{id}',[
         'id' => 1
     ]),
     ->query([
         'fields' => 'example'
     ])
+    ->userId(
+        '{{YourCustomUserId}}'
+    )
     ->get();
 
 if($apiRequest->getStatusCode() == 200) {
+
     print_r($apiRequest->getResponse());
 }
 ```
 
-##### Post
+For more information check the [Optimize documentation](/docs/optimize/v1/introduction).
+
+## Using the CDN
+
+To use Prepr in production we advise you to use the API CDN for a fast response.
+Add the API CDN Url to the init of the SDK.
+
+```php
+<?php
+
+use Preprio\Prepr;
+
+$apiRequest = new Prepr('{ACCESS_TOKEN}', null, 'https://cdn.prepr.io/');
+```
+
+### Auto paging results
+
+To get all resources for an endpoint, you can use the auto paging feature.
+
+```php
+$apiRequest
+    ->path('publications')
+    ->query([
+        'limit' => 200 // optional
+    ])
+    ->autoPaging();
+
+if($apiRequest->getStatusCode() == 200) {
+
+    print_r($apiRequest->getResponse());
+}
+```
+
+### Override the AccessToken in a request
+
+The authorization can also be set for one specific request `->url('url')->authorization('token')`.
+
+### Post
 
 ```php
 $apiRequest
@@ -69,11 +145,12 @@ $apiRequest
     ->post();
 
 if($apiRequest->getStatusCode() == 201) {
+
     print_r($apiRequest->getResponse());
 }
 ```
 
-##### Put
+### Put
 
 ```php
 $apiRequest
@@ -84,11 +161,12 @@ $apiRequest
     ->put();
 
 if($apiRequest->getStatusCode() == 200) {
+
     print_r($apiRequest->getResponse());
 }
 ```
 
-##### Delete
+### Delete
 
 ```php
 $apiRequest
@@ -98,31 +176,12 @@ $apiRequest
     ->delete();
 
 if($apiRequest->getStatusCode() == 204) {
+
     // Deleted.
 }
 ```
 
-##### A/B testing custom userId
-
-```php
-$apiRequest
-    ->path('tags/{id}',[
-        'id' => 1
-    ]),
-    ->query([
-        'fields' => 'example'
-    ])
-    ->userId(
-        'testUser'
-    )
-    ->get();
-
-if($apiRequest->getStatusCode() == 200) {
-    print_r($apiRequest->getResponse());
-}
-```
-
-##### Multipart/Chunk upload
+### Multipart/Chunk asset upload
 
 ```php
 $apiRequest
@@ -134,31 +193,11 @@ $apiRequest
     ->post();
 
 if($apiRequest->getStatusCode() == 200) {
+
     print_r($apiRequest->getResponse());
 }
 ```
 
-##### Autopaging
+### Debug Errors
 
-```php
-$apiRequest
-    ->path('publications')
-    ->query([
-        'limit' => 200 // optional
-    ])
-    ->autoPaging();
-
-if($apiRequest->getStatusCode() == 200) {
-    print_r($apiRequest->getResponse());
-}
-```
-
-
-#### Debug
-
-For debug you can use `getRawResponse()`
-
-
-#### Documentation
-
-<a href="https://developers.prepr.io/docs">For all the details and full documentation check out the Prepr Developer docs</a>
+With `$apiRequest->getRawResponse()` you can get the raw response from the Prepr API.
