@@ -22,30 +22,32 @@ class Prepr
     protected $authorization;
     protected $file = null;
     protected $statusCode;
-    protected $userId;
+    protected $customerId;
 
     private $chunkSize = 26214400;
 
-    public function __construct($authorization = null, $userId = null, $baseUrl = 'https://api.eu1.prepr.io/')
+    public function __construct($authorization = null, $customerId = null, $baseUrl = 'https://cdn.prepr.io/')
     {
         $this->baseUrl = $baseUrl;
         $this->authorization = $authorization;
-
-        if($userId) {
-            $this->userId = $this->hashUserId($userId);
-        }
+        $this->customerId = $customerId;
     }
 
     protected function client()
     {
+        $headers = [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => $this->authorization
+        ];
+
+        if($this->customerId) {
+            $headers['Prepr-Customer-Id'] = $this->customerId;
+        }
+
         return new Client([
             'http_errors' => false,
-            'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-                'Authorization' => $this->authorization,
-                'Prepr-ABTesting' => $this->userId
-            ]
+            'headers' => $headers
         ]);
     }
 
@@ -298,16 +300,9 @@ class Prepr
         return $this;
     }
 
-    public function hashUserId($userId)
+    public function customerId($customerId)
     {
-        $hashValue = Murmur::hash3_int($userId, 1);
-        $ratio = $hashValue / pow(2, 32);
-        return intval($ratio*10000);
-    }
-
-    public function userId($userId)
-    {
-        $this->userId = $this->hashUserId($userId);
+        $this->customerId = $customerId;
 
         return $this;
     }

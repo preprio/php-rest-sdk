@@ -86,7 +86,7 @@ $apiRequest
     ->query([
         'fields' => 'example'
     ])
-    ->userId(
+    ->customerId(
         '{{YourCustomUserId}}'
     )
     ->get();
