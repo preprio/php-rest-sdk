@@ -6,29 +6,29 @@ use GuzzleHttp\Client;
 
 class Prepr
 {
-    protected $baseUrl;
-    protected $path;
-    protected $query;
-    protected $rawQuery;
-    protected $method;
-    protected $params = [];
+    protected $client;
+    protected string $baseUrl;
+    protected string $path;
+    protected string $query;
+    protected array $rawQuery;
+    protected string $method;
+    protected array $params = [];
     protected $response;
     protected $rawResponse;
     protected $request;
-    protected $authorization;
+    protected string $authorization;
     protected $file = null;
     protected $statusCode;
-    protected $client;
 
     private $chunkSize = 26214400;
 
-    public function __construct($authorization = null, $baseUrl = 'https://cdn.prepr.io/')
+    public function __construct(string $authorization, string $baseUrl = 'https://cdn.prepr.io/')
     {
         $this->baseUrl = $baseUrl;
         $this->authorization = $authorization;
     }
 
-    protected function client()
+    protected function client() : Client
     {
         return new Client([
             'http_errors' => false,
@@ -40,7 +40,7 @@ class Prepr
         ]);
     }
 
-    protected function request($options = [])
+    protected function request(array $options = []) : self
     {
         $url = $this->baseUrl . $this->path;
 
@@ -70,49 +70,49 @@ class Prepr
         return $this;
     }
 
-    public function authorization(string $authorization)
+    public function authorization(string $authorization) : self
     {
         $this->authorization = $authorization;
 
         return $this;
     }
 
-    public function url(string $url)
+    public function url(string $url) : self
     {
         $this->baseUrl = $url;
 
         return $this;
     }
 
-    public function get()
+    public function get()  : self
     {
         $this->method = 'get';
 
         return $this->request();
     }
 
-    public function post()
+    public function post() : self
     {
         $this->method = 'post';
 
         return $this->request();
     }
 
-    public function put()
+    public function put() : self
     {
         $this->method = 'put';
 
         return $this->request();
     }
 
-    public function delete()
+    public function delete() : self
     {
         $this->method = 'delete';
 
         return $this->request();
     }
 
-    public function path($path = null, array $array = [])
+    public function path($path = null, array $array = []) : self
     {
         foreach ($array as $key => $value) {
             $path = str_replace('{' . $key . '}', $value, $path);
@@ -123,14 +123,14 @@ class Prepr
         return $this;
     }
 
-    public function method($method = null)
+    public function method($method = null) : self
     {
         $this->method = $method;
 
         return $this;
     }
 
-    public function query(array $array)
+    public function query(array $array) : self
     {
         $this->rawQuery = $array;
         $this->query = '?' . http_build_query($array);
@@ -138,7 +138,7 @@ class Prepr
         return $this;
     }
 
-    public function params(array $array)
+    public function params(array $array) : self
     {
         $this->params = $array;
 
@@ -150,12 +150,12 @@ class Prepr
         return $this->response;
     }
 
-    public function getRawResponse()
+    public function getRawResponse() : string
     {
         return $this->rawResponse;
     }
 
-    public function getStatusCode()
+    public function getStatusCode() : int
     {
         if($this->statusCode) {
             return $this->statusCode;
@@ -164,7 +164,7 @@ class Prepr
         return $this->request->getStatusCode();
     }
 
-    public function file(string $filepath)
+    public function file(string $filepath) : self
     {
         $fileSize = filesize($filepath);
         $file = fopen($filepath, 'r');
@@ -232,7 +232,7 @@ class Prepr
             ->post();
     }
 
-    public function autoPaging()
+    public function autoPaging() : self
     {
         $this->method = 'get';
 
@@ -292,7 +292,7 @@ class Prepr
         return $this;
     }
 
-    public function nestedArrayToMultipart(array $array)
+    public function nestedArrayToMultipart(array $array) : array
     {
         $flatten = function ($array, $original_key = '') use (&$flatten) {
             $output = [];
