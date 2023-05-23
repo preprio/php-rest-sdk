@@ -210,7 +210,7 @@ class Prepr
             $this->params['upload_phase'] = 'transfer';
             $this->params['file_chunk'] = $stream;
 
-            $prepr = (new Prepr($this->authorization,$this->userId,$this->baseUrl))
+            $prepr = (new Prepr($this->authorization, $this->baseUrl))
                 ->path('assets/{id}/multipart', [
                     'id' => $id,
                 ])
@@ -224,7 +224,7 @@ class Prepr
 
         $this->params['upload_phase'] = 'finish';
 
-        return (new Prepr($this->authorization,$this->userId,$this->baseUrl))
+        return (new Prepr($this->authorization, $this->baseUrl))
             ->path('assets/{id}/multipart', [
                 'id' => $id,
             ])
@@ -249,7 +249,7 @@ class Prepr
             $query['limit'] = $perPage;
             $query['offset'] = $page*$perPage;
 
-            $result = (new Prepr($this->authorization,$this->userId,$this->baseUrl))
+            $result = (new Prepr($this->authorization, $this->baseUrl))
                 ->path($this->path)
                 ->query($query)
                 ->get();
