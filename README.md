@@ -4,8 +4,10 @@ This package is an SDK for the REST API.
 
 ## Basics
 The SDK on [GitHub](https://github.com/preprio/php-sdk)  
-Minimal PHP version: `> 8.2`
-Requires `GuzzleHttp 7.0.X`
+
+Minimal PHP version: `^8.2` 
+
+Requires `GuzzleHttp ^7.7.0` 
 
 For Laravel projects we recommend using the Laravel providers for [REST](https://github.com/preprio/laravel-rest-sdk) or [GraphQL](https://github.com/preprio/laravel-graphql-sdk).
 
