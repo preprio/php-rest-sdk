@@ -3,10 +3,6 @@
 namespace Preprio;
 
 use GuzzleHttp\Client;
-use Cache;
-use Artisan;
-use lastguest\Murmur;
-use Session;
 
 class Prepr
 {
@@ -22,18 +18,14 @@ class Prepr
     protected $authorization;
     protected $file = null;
     protected $statusCode;
-    protected $userId;
+    protected $client;
 
     private $chunkSize = 26214400;
 
-    public function __construct($authorization = null, $userId = null, $baseUrl = 'https://api.eu1.prepr.io/')
+    public function __construct($authorization = null, $baseUrl = 'https://cdn.prepr.io/')
     {
         $this->baseUrl = $baseUrl;
         $this->authorization = $authorization;
-
-        if($userId) {
-            $this->userId = $this->hashUserId($userId);
-        }
     }
 
     protected function client()
@@ -44,7 +36,6 @@ class Prepr
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
                 'Authorization' => $this->authorization,
-                'Prepr-ABTesting' => $this->userId
             ]
         ]);
     }
@@ -70,22 +61,23 @@ class Prepr
         $this->rawResponse = $this->request->getBody()->getContents();
         $this->response = json_decode($this->rawResponse, true);
 
-        // Files larger then 25 MB (upload chunked)
-        if ($this->data_get($this->file, 'chunks') > 1 && ($this->getStatusCode() === 201 || $this->getStatusCode() === 200)) {
+        // Files larger than 25 MB (upload chunked)
+        if ($this->data_get($this->file, 'chunks') > 1 &&
+            ($this->getStatusCode() === 201 || $this->getStatusCode() === 200)) {
             return $this->processFileUpload();
         }
 
         return $this;
     }
 
-    public function authorization($authorization)
+    public function authorization(string $authorization)
     {
         $this->authorization = $authorization;
 
         return $this;
     }
 
-    public function url($url)
+    public function url(string $url)
     {
         $this->baseUrl = $url;
 
@@ -168,10 +160,11 @@ class Prepr
         if($this->statusCode) {
             return $this->statusCode;
         }
+
         return $this->request->getStatusCode();
     }
 
-    public function file($filepath)
+    public function file(string $filepath)
     {
         $fileSize = filesize($filepath);
         $file = fopen($filepath, 'r');
@@ -186,13 +179,13 @@ class Prepr
 
         if ($this->file) {
 
-            // Files larger then 25 MB (upload chunked)
+            // Files larger than 25 MB (upload chunked)
             if ($this->data_get($this->file, 'chunks') > 1) {
 
                 $this->params['upload_phase'] = 'start';
                 $this->params['file_size'] = $this->data_get($this->file, 'size');
 
-                // Files smaller then 25 MB (upload directly)
+                // Files smaller than 25 MB (upload directly)
             } else {
                 $this->params['source'] = $this->data_get($this->file, 'file');
             }
@@ -293,26 +286,13 @@ class Prepr
             'items' => $arrayItems,
             'total' => count($arrayItems)
         ];
+
         $this->statusCode = 200;
 
         return $this;
     }
 
-    public function hashUserId($userId)
-    {
-        $hashValue = Murmur::hash3_int($userId, 1);
-        $ratio = $hashValue / pow(2, 32);
-        return intval($ratio*10000);
-    }
-
-    public function userId($userId)
-    {
-        $this->userId = $this->hashUserId($userId);
-
-        return $this;
-    }
-
-    public function nestedArrayToMultipart($array)
+    public function nestedArrayToMultipart(array $array)
     {
         $flatten = function ($array, $original_key = '') use (&$flatten) {
             $output = [];
@@ -347,7 +327,7 @@ class Prepr
         return $multipart;
     }
 
-    public function data_get($array, $variable)
+    public function data_get(array $array, string $variable)
     {
         if(isset($array[$variable])) {
             return $array[$variable];
