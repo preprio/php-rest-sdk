@@ -18,6 +18,7 @@ class Prepr
     protected $authorization;
     protected $file = null;
     protected $statusCode;
+    protected $client;
 
     private $chunkSize = 26214400;
 
