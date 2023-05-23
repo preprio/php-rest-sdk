@@ -7,7 +7,6 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class Prepr
 {
-    protected $client;
     protected string $baseUrl;
     protected string $path;
     protected string $query;
@@ -17,8 +16,8 @@ class Prepr
     protected array $response;
     protected string $rawResponse;
     protected string $authorization;
-    protected array $file;
-    protected int $statusCode;
+    protected array|null $file = null;
+    protected int|null $statusCode = null;
 
     private int $chunkSize = 26214400;
 
@@ -59,6 +58,7 @@ class Prepr
 
         $request = $this->client()->request($this->method, $url . $this->query, $data);
 
+        $this->statusCode = $request->getStatusCode();
         $this->rawResponse = $request->getBody()->getContents();
         $this->response = json_decode($this->rawResponse, true);
 
