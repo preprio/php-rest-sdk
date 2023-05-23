@@ -3,6 +3,7 @@
 namespace Preprio;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 class Prepr
 {
@@ -13,14 +14,13 @@ class Prepr
     protected array $rawQuery;
     protected string $method;
     protected array $params = [];
-    protected $response;
-    protected $rawResponse;
-    protected $request;
+    protected array $response;
+    protected string $rawResponse;
     protected string $authorization;
-    protected $file = null;
-    protected $statusCode;
+    protected array $file;
+    protected int $statusCode;
 
-    private $chunkSize = 26214400;
+    private int $chunkSize = 26214400;
 
     public function __construct(string $authorization, string $baseUrl = 'https://cdn.prepr.io/')
     {
@@ -40,11 +40,12 @@ class Prepr
         ]);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     protected function request(array $options = []) : self
     {
         $url = $this->baseUrl . $this->path;
-
-        $this->client = $this->client();
 
         $data = [
             'form_params' => $this->params,
@@ -56,9 +57,9 @@ class Prepr
             ];
         }
 
-        $this->request = $this->client->request($this->method, $url . $this->query, $data);
+        $request = $this->client()->request($this->method, $url . $this->query, $data);
 
-        $this->rawResponse = $this->request->getBody()->getContents();
+        $this->rawResponse = $request->getBody()->getContents();
         $this->response = json_decode($this->rawResponse, true);
 
         // Files larger than 25 MB (upload chunked)
@@ -84,6 +85,9 @@ class Prepr
         return $this;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function get()  : self
     {
         $this->method = 'get';
@@ -91,6 +95,9 @@ class Prepr
         return $this->request();
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function post() : self
     {
         $this->method = 'post';
@@ -98,6 +105,9 @@ class Prepr
         return $this->request();
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function put() : self
     {
         $this->method = 'put';
@@ -105,6 +115,9 @@ class Prepr
         return $this->request();
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function delete() : self
     {
         $this->method = 'delete';
@@ -145,7 +158,7 @@ class Prepr
         return $this;
     }
 
-    public function getResponse()
+    public function getResponse() : array
     {
         return $this->response;
     }
@@ -194,7 +207,7 @@ class Prepr
         return $this;
     }
 
-    private function processFileUpload()
+    private function processFileUpload(): Prepr
     {
         $id = $this->data_get($this->response, 'id');
         $fileSize = $this->data_get($this->file, 'size');
@@ -202,7 +215,7 @@ class Prepr
         for ($i = 0; $i <= $this->data_get($this->file, 'chunks'); $i++) {
 
             $offset = ($this->chunkSize * $i);
-            $endOfFile = (($offset + $this->chunkSize) > $fileSize ? true : false);
+            $endOfFile = ($offset + $this->chunkSize) > $fileSize;
 
             $original = \GuzzleHttp\Psr7\stream_for($this->data_get($this->file, 'file'));
             $stream = new \GuzzleHttp\Psr7\LimitStream($original, ($endOfFile ? ($fileSize - $offset) : $this->chunkSize), $offset);
