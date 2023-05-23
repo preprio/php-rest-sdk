@@ -327,9 +327,9 @@ class Prepr
         return $multipart;
     }
 
-    public function data_get(array $array, string $variable)
+    public function data_get($array, string $variable)
     {
-        if(isset($array[$variable])) {
+        if($array && isset($array[$variable])) {
             return $array[$variable];
         }
     }
