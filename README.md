@@ -1,10 +1,10 @@
 # PHP + Prepr SDK
 
-This package is an SDK for the REST and GraphQL API.
+This package is an SDK for the REST API.
 
 ## Basics
 The SDK on [GitHub](https://github.com/preprio/php-sdk)  
-Minimal PHP version: `> 5.6.4`   
+Minimal PHP version: `> 5.6.4`
 Requires `GuzzleHttp 7.0.X`
 
 For Laravel projects we recommend using the Laravel providers for [REST](https://github.com/preprio/laravel-rest-sdk) or [GraphQL](https://github.com/preprio/laravel-graphql-sdk).
@@ -29,7 +29,7 @@ use Preprio\Prepr;
 $apiRequest = new Prepr('{ACCESS_TOKEN}');
 
 $apiRequest
-    ->path('publications')
+    ->path('content_items')
     ->query([
         'fields' => 'items'
     ])
@@ -42,7 +42,7 @@ if($apiRequest->getStatusCode() == 200) {
 ```
 
 
-To get a single publication, pass the ID to the request.
+To get a single content item, pass the ID to the request.
 
 ```php
 <?php
