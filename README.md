@@ -1,11 +1,13 @@
-# Getting started with PHP
+# PHP + Prepr SDK
 
-This package is a wrapper for the REST and GraphQL API.
+This package is an SDK for the REST and GraphQL API.
 
 ## Basics
 The SDK on [GitHub](https://github.com/preprio/php-sdk)  
 Minimal PHP version: `> 5.6.4`   
 Requires `GuzzleHttp 7.0.X`
+
+For Laravel projects we recommend using the Laravel providers for [REST](https://github.com/preprio/laravel-rest-sdk) or [GraphQL](https://github.com/preprio/laravel-graphql-sdk).
 
 ## Installation
 
@@ -17,7 +19,7 @@ composer require preprio/php-sdk
 
 ## Making your first request
 
-Let's start with getting all publications from your Prepr Environment. 
+Let's start with getting some content items from your Prepr Environment. 
 
 ```php
 <?php
@@ -40,7 +42,7 @@ if($apiRequest->getStatusCode() == 200) {
 ```
 
 
-To get a single publication, pass the Id to the request.
+To get a single publication, pass the ID to the request.
 
 ```php
 <?php
