@@ -3,6 +3,7 @@
 This package is an SDK for the REST API.
 
 ## Basics
+
 The SDK on [GitHub](https://github.com/preprio/php-sdk)  
 
 Minimal PHP version: `^8.2` 
@@ -21,7 +22,7 @@ composer require preprio/php-sdk
 
 ## Making your first request
 
-Let's start with getting some content items from your Prepr Environment. 
+Let's start with getting some content items from your Prepr environment. 
 
 ```php
 <?php
