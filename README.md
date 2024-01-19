@@ -4,7 +4,7 @@ This package is an SDK for the REST API.
 
 ## Basics
 
-The SDK on [GitHub](https://github.com/preprio/php-sdk)  
+The SDK on [GitHub](https://github.com/preprio/php-rest-sdk)  
 
 Minimal PHP version: `^8.2` 
 
@@ -17,7 +17,7 @@ For Laravel projects we recommend using the Laravel providers for [REST](https:/
 You can install the SDK as a composer package.
 
 ```bash
-composer require preprio/php-sdk
+composer require preprio/php-rest-sdk
 ```
 
 ## Making your first request
@@ -27,7 +27,7 @@ Let's start with getting some content items from your Prepr environment.
 ```php
 <?php
 
-use Preprio\Prepr;
+use Preprio\PhpRestSdk;
 
 $apiRequest = new Prepr('{ACCESS_TOKEN}');
 
@@ -50,7 +50,7 @@ To get a single content item, pass the ID to the request.
 ```php
 <?php
 
-use Preprio\Prepr;
+use Preprio\PhpRestSdk;
 
 $apiRequest = new Prepr('{ACCESS_TOKEN}');
 
