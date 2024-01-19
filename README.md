@@ -27,7 +27,7 @@ Let's start with getting some content items from your Prepr environment.
 ```php
 <?php
 
-use Preprio\PhpRestSdk;
+use Preprio\PhpRestSdk\Prepr;
 
 $apiRequest = new Prepr('{ACCESS_TOKEN}');
 
@@ -50,7 +50,7 @@ To get a single content item, pass the ID to the request.
 ```php
 <?php
 
-use Preprio\PhpRestSdk;
+use Preprio\PhpRestSdk\Prepr;
 
 $apiRequest = new Prepr('{ACCESS_TOKEN}');
 
