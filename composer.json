@@ -1,5 +1,5 @@
 {
-    "name": "preprio/php-sdk",
+    "name": "preprio/php-rest-sdk",
     "description": "Prepr PHP SDK",
     "keywords": ["php", "prepr"],
     "license": "MIT",

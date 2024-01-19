@@ -1,6 +1,6 @@
 <?php
 
-namespace Preprio;
+namespace Preprio\PhpRestSdk;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
