@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Preprio\\": "src/"
+            "Preprio\\PhpRestSdk\\": "src/"
         }
     }
 }
