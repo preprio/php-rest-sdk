@@ -3,9 +3,12 @@
 This package is an SDK for the REST API.
 
 ## Basics
-The SDK on [GitHub](https://github.com/preprio/php-sdk)  
-Minimal PHP version: `> 5.6.4`
-Requires `GuzzleHttp 7.0.X`
+
+The SDK on [GitHub](https://github.com/preprio/php-rest-sdk)  
+
+Minimal PHP version: `^8.2` 
+
+Requires `GuzzleHttp ^7.7.0` 
 
 For Laravel projects we recommend using the Laravel providers for [REST](https://github.com/preprio/laravel-rest-sdk) or [GraphQL](https://github.com/preprio/laravel-graphql-sdk).
 
@@ -14,17 +17,17 @@ For Laravel projects we recommend using the Laravel providers for [REST](https:/
 You can install the SDK as a composer package.
 
 ```bash
-composer require preprio/php-sdk
+composer require preprio/php-rest-sdk
 ```
 
 ## Making your first request
 
-Let's start with getting some content items from your Prepr Environment. 
+Let's start with getting some content items from your Prepr environment. 
 
 ```php
 <?php
 
-use Preprio\Prepr;
+use Preprio\PhpRestSdk\Prepr;
 
 $apiRequest = new Prepr('{ACCESS_TOKEN}');
 
@@ -47,7 +50,7 @@ To get a single content item, pass the ID to the request.
 ```php
 <?php
 
-use Preprio\Prepr;
+use Preprio\PhpRestSdk\Prepr;
 
 $apiRequest = new Prepr('{ACCESS_TOKEN}');
 

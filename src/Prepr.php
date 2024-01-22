@@ -1,34 +1,33 @@
 <?php
 
-namespace Preprio;
+namespace Preprio\PhpRestSdk;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 class Prepr
 {
-    protected $baseUrl;
-    protected $path;
-    protected $query;
-    protected $rawQuery;
-    protected $method;
-    protected $params = [];
-    protected $response;
-    protected $rawResponse;
-    protected $request;
-    protected $authorization;
-    protected $file = null;
-    protected $statusCode;
-    protected $client;
+    protected string $baseUrl;
+    protected string $path;
+    protected string $query;
+    protected array $rawQuery;
+    protected string $method;
+    protected array $params = [];
+    protected array $response;
+    protected string $rawResponse;
+    protected string $authorization;
+    protected array|null $file = null;
+    protected int|null $statusCode = null;
 
-    private $chunkSize = 26214400;
+    private int $chunkSize = 26214400;
 
-    public function __construct($authorization = null, $baseUrl = 'https://cdn.prepr.io/')
+    public function __construct(string $authorization, string $baseUrl = 'https://cdn.prepr.io/')
     {
         $this->baseUrl = $baseUrl;
         $this->authorization = $authorization;
     }
 
-    protected function client()
+    protected function client() : Client
     {
         return new Client([
             'http_errors' => false,
@@ -40,11 +39,12 @@ class Prepr
         ]);
     }
 
-    protected function request($options = [])
+    /**
+     * @throws GuzzleException
+     */
+    protected function request(array $options = []) : self
     {
         $url = $this->baseUrl . $this->path;
-
-        $this->client = $this->client();
 
         $data = [
             'form_params' => $this->params,
@@ -56,9 +56,10 @@ class Prepr
             ];
         }
 
-        $this->request = $this->client->request($this->method, $url . $this->query, $data);
+        $request = $this->client()->request($this->method, $url . $this->query, $data);
 
-        $this->rawResponse = $this->request->getBody()->getContents();
+        $this->statusCode = $request->getStatusCode();
+        $this->rawResponse = $request->getBody()->getContents();
         $this->response = json_decode($this->rawResponse, true);
 
         // Files larger than 25 MB (upload chunked)
@@ -70,49 +71,61 @@ class Prepr
         return $this;
     }
 
-    public function authorization(string $authorization)
+    public function authorization(string $authorization) : self
     {
         $this->authorization = $authorization;
 
         return $this;
     }
 
-    public function url(string $url)
+    public function url(string $url) : self
     {
         $this->baseUrl = $url;
 
         return $this;
     }
 
-    public function get()
+    /**
+     * @throws GuzzleException
+     */
+    public function get()  : self
     {
         $this->method = 'get';
 
         return $this->request();
     }
 
-    public function post()
+    /**
+     * @throws GuzzleException
+     */
+    public function post() : self
     {
         $this->method = 'post';
 
         return $this->request();
     }
 
-    public function put()
+    /**
+     * @throws GuzzleException
+     */
+    public function put() : self
     {
         $this->method = 'put';
 
         return $this->request();
     }
 
-    public function delete()
+    /**
+     * @throws GuzzleException
+     */
+    public function delete() : self
     {
         $this->method = 'delete';
 
         return $this->request();
     }
 
-    public function path($path = null, array $array = [])
+    public function path($path = null, array $array = []) : self
     {
         foreach ($array as $key => $value) {
             $path = str_replace('{' . $key . '}', $value, $path);
@@ -123,14 +136,14 @@ class Prepr
         return $this;
     }
 
-    public function method($method = null)
+    public function method($method = null) : self
     {
         $this->method = $method;
 
         return $this;
     }
 
-    public function query(array $array)
+    public function query(array $array) : self
     {
         $this->rawQuery = $array;
         $this->query = '?' . http_build_query($array);
@@ -138,24 +151,24 @@ class Prepr
         return $this;
     }
 
-    public function params(array $array)
+    public function params(array $array) : self
     {
         $this->params = $array;
 
         return $this;
     }
 
-    public function getResponse()
+    public function getResponse() : array
     {
         return $this->response;
     }
 
-    public function getRawResponse()
+    public function getRawResponse() : string
     {
         return $this->rawResponse;
     }
 
-    public function getStatusCode()
+    public function getStatusCode() : int
     {
         if($this->statusCode) {
             return $this->statusCode;
@@ -164,7 +177,7 @@ class Prepr
         return $this->request->getStatusCode();
     }
 
-    public function file(string $filepath)
+    public function file(string $filepath) : self
     {
         $fileSize = filesize($filepath);
         $file = fopen($filepath, 'r');
@@ -194,7 +207,7 @@ class Prepr
         return $this;
     }
 
-    private function processFileUpload()
+    private function processFileUpload(): Prepr
     {
         $id = $this->data_get($this->response, 'id');
         $fileSize = $this->data_get($this->file, 'size');
@@ -202,7 +215,7 @@ class Prepr
         for ($i = 0; $i <= $this->data_get($this->file, 'chunks'); $i++) {
 
             $offset = ($this->chunkSize * $i);
-            $endOfFile = (($offset + $this->chunkSize) > $fileSize ? true : false);
+            $endOfFile = ($offset + $this->chunkSize) > $fileSize;
 
             $original = \GuzzleHttp\Psr7\stream_for($this->data_get($this->file, 'file'));
             $stream = new \GuzzleHttp\Psr7\LimitStream($original, ($endOfFile ? ($fileSize - $offset) : $this->chunkSize), $offset);
@@ -210,7 +223,7 @@ class Prepr
             $this->params['upload_phase'] = 'transfer';
             $this->params['file_chunk'] = $stream;
 
-            $prepr = (new Prepr($this->authorization,$this->userId,$this->baseUrl))
+            $prepr = (new Prepr($this->authorization, $this->baseUrl))
                 ->path('assets/{id}/multipart', [
                     'id' => $id,
                 ])
@@ -224,7 +237,7 @@ class Prepr
 
         $this->params['upload_phase'] = 'finish';
 
-        return (new Prepr($this->authorization,$this->userId,$this->baseUrl))
+        return (new Prepr($this->authorization, $this->baseUrl))
             ->path('assets/{id}/multipart', [
                 'id' => $id,
             ])
@@ -232,7 +245,7 @@ class Prepr
             ->post();
     }
 
-    public function autoPaging()
+    public function autoPaging() : self
     {
         $this->method = 'get';
 
@@ -249,7 +262,7 @@ class Prepr
             $query['limit'] = $perPage;
             $query['offset'] = $page*$perPage;
 
-            $result = (new Prepr($this->authorization,$this->userId,$this->baseUrl))
+            $result = (new Prepr($this->authorization, $this->baseUrl))
                 ->path($this->path)
                 ->query($query)
                 ->get();
@@ -292,7 +305,7 @@ class Prepr
         return $this;
     }
 
-    public function nestedArrayToMultipart(array $array)
+    public function nestedArrayToMultipart(array $array) : array
     {
         $flatten = function ($array, $original_key = '') use (&$flatten) {
             $output = [];
@@ -327,9 +340,9 @@ class Prepr
         return $multipart;
     }
 
-    public function data_get(array $array, string $variable)
+    public function data_get($array, string $variable)
     {
-        if(isset($array[$variable])) {
+        if($array && isset($array[$variable])) {
             return $array[$variable];
         }
     }
